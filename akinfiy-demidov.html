@@ -1,0 +1,1476 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Акинфий Демидов — Невьянская башня</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        :root{
+            --bg:#070706;
+            --panel:#151310;
+            --panel-light:#1d1a16;
+
+            --gold:#c99a55;
+            --gold-light:#e0bd82;
+            --gold-dark:#735129;
+
+            --text:#f2eadf;
+            --muted:#b6a48b;
+            --border:rgba(201,154,85,.28);
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            min-height:100vh;
+
+            background:var(--bg);
+            color:var(--text);
+
+            font-family:Georgia,"Times New Roman",serif;
+
+            overflow-x:hidden;
+        }
+
+        body.menu-open{
+            overflow:hidden;
+        }
+
+        a{
+            color:inherit;
+            text-decoration:none;
+        }
+
+        img{
+            display:block;
+            max-width:100%;
+        }
+
+        button{
+            font:inherit;
+        }
+
+        /* ===========================
+                  КНОПКА МЕНЮ
+        =========================== */
+
+        .menu-button{
+            position:fixed;
+
+            top:22px;
+            left:22px;
+
+            width:54px;
+            height:54px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            border:1px solid rgba(201,154,85,.38);
+            border-radius:12px;
+
+            background:rgba(15,14,12,.92);
+            color:var(--gold);
+
+            font-size:28px;
+            line-height:1;
+
+            cursor:pointer;
+
+            z-index:2000;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease,
+                transform .25s ease,
+                background .25s ease,
+                border-color .25s ease;
+        }
+
+        .menu-button:hover{
+            background:#2a2016;
+            border-color:var(--gold);
+
+            transform:scale(1.05);
+        }
+
+        .menu-button.hide{
+            opacity:0;
+            visibility:hidden;
+
+            pointer-events:none;
+
+            transform:translateY(-8px) scale(.88);
+        }
+
+        /* ===========================
+                    ЗАТЕМНЕНИЕ
+        =========================== */
+
+        .overlay{
+            position:fixed;
+            inset:0;
+
+            background:rgba(0,0,0,.58);
+
+            opacity:0;
+            visibility:hidden;
+            pointer-events:none;
+
+            z-index:1400;
+
+            transition:
+                opacity .35s ease,
+                visibility .35s ease;
+        }
+
+        .overlay.show{
+            opacity:1;
+            visibility:visible;
+            pointer-events:auto;
+        }
+
+        /* ===========================
+                  БОКОВОЕ МЕНЮ
+        =========================== */
+
+        .sidebar{
+            position:fixed;
+
+            top:0;
+            left:0;
+
+            width:280px;
+            height:100vh;
+
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+
+            padding:30px 26px 38px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #22170f,
+                    #15100c
+                );
+
+            border-right:1px solid rgba(201,154,85,.25);
+
+            box-shadow:24px 0 55px rgba(0,0,0,.48);
+
+            overflow-y:auto;
+
+            z-index:1700;
+
+            transform:translateX(-100%);
+
+            transition:transform .35s ease;
+        }
+
+        .sidebar.open{
+            transform:translateX(0);
+        }
+
+        .logo{
+            width:100%;
+
+            text-align:center;
+        }
+
+        .logo-image{
+            width:72px;
+            height:96px;
+
+            margin:0 auto 12px;
+
+            object-fit:contain;
+
+            background:transparent;
+
+            filter:
+                brightness(1.08)
+                contrast(1.05);
+
+            mix-blend-mode:screen;
+        }
+
+        .logo-title{
+            color:var(--gold);
+
+            font-size:28px;
+            line-height:1.2;
+        }
+
+        .logo-subtitle{
+            margin-top:12px;
+
+            color:#9e886a;
+
+            font-size:11px;
+            letter-spacing:1.8px;
+            line-height:1.5;
+
+            text-transform:uppercase;
+        }
+
+        .sidebar-menu{
+            width:100%;
+
+            margin-top:38px;
+        }
+
+        .sidebar-menu a{
+            display:block;
+
+            padding:17px 12px;
+
+            color:#cdb898;
+
+            text-align:center;
+
+            border-top:1px solid rgba(255,255,255,.05);
+
+            transition:
+                color .25s ease,
+                background .25s ease;
+        }
+
+        .sidebar-menu a:last-child{
+            border-bottom:1px solid rgba(255,255,255,.05);
+        }
+
+        .sidebar-menu a:hover{
+            color:var(--gold);
+
+            background:rgba(255,255,255,.03);
+        }
+
+        .sidebar-menu .active{
+            color:var(--gold);
+        }
+
+        /* ===========================
+                  ВЕРХНЯЯ ЧАСТЬ
+        =========================== */
+
+        .character-hero{
+            position:relative;
+
+            min-height:720px;
+
+            display:flex;
+            align-items:center;
+
+            padding:90px 7vw 110px;
+
+            overflow:hidden;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(5,5,5,.25) 0%,
+                    rgba(5,5,5,.46) 45%,
+                    rgba(5,5,5,.88) 100%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(5,5,5,.12) 0%,
+                    rgba(5,5,5,.32) 65%,
+                    var(--bg) 100%
+                ),
+                url("/background.png") center top / cover no-repeat;
+        }
+
+        .character-hero::after{
+            content:"";
+
+            position:absolute;
+            inset:0;
+
+            background:
+                radial-gradient(
+                    circle at 26% 42%,
+                    rgba(201,154,85,.13),
+                    transparent 36%
+                );
+
+            pointer-events:none;
+        }
+
+        .hero-inner{
+            position:relative;
+
+            width:min(1380px,100%);
+
+            display:grid;
+            grid-template-columns:minmax(320px,480px) 1fr;
+
+            align-items:center;
+
+            gap:80px;
+
+            margin:0 auto;
+
+            z-index:2;
+        }
+
+        /* ===========================
+                    ПОРТРЕТ
+        =========================== */
+
+        .portrait-frame{
+            position:relative;
+
+            width:100%;
+            max-width:430px;
+
+            margin:0 auto;
+
+            padding:9px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(201,154,85,.8),
+                    rgba(201,154,85,.1),
+                    rgba(201,154,85,.45)
+                );
+
+            border-radius:24px;
+
+            box-shadow:
+                0 35px 90px rgba(0,0,0,.55),
+                0 0 35px rgba(201,154,85,.08);
+        }
+
+        .portrait-frame::before,
+        .portrait-frame::after{
+            content:"";
+
+            position:absolute;
+
+            width:44px;
+            height:44px;
+
+            border-color:var(--gold);
+            border-style:solid;
+
+            pointer-events:none;
+        }
+
+        .portrait-frame::before{
+            top:-8px;
+            left:-8px;
+
+            border-width:2px 0 0 2px;
+        }
+
+        .portrait-frame::after{
+            right:-8px;
+            bottom:-8px;
+
+            border-width:0 2px 2px 0;
+        }
+
+        .portrait{
+            position:relative;
+
+            min-height:570px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            overflow:hidden;
+
+            border-radius:17px;
+
+            background:
+                radial-gradient(
+                    circle at 50% 30%,
+                    #3d352c,
+                    #211d18 48%,
+                    #100f0d 100%
+                );
+        }
+
+        .portrait-letter{
+            color:var(--gold);
+
+            font-size:220px;
+
+            text-shadow:
+                0 8px 30px rgba(0,0,0,.5);
+        }
+
+        .portrait-caption{
+            position:absolute;
+
+            right:0;
+            bottom:0;
+            left:0;
+
+            padding:26px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    transparent,
+                    rgba(5,5,5,.92)
+                );
+
+            color:var(--muted);
+
+            font-size:12px;
+            letter-spacing:1.7px;
+
+            text-align:center;
+            text-transform:uppercase;
+        }
+
+        /* ===========================
+                  ТЕКСТ ГЕРОЯ
+        =========================== */
+
+        .hero-content{
+            max-width:760px;
+        }
+
+        .eyebrow{
+            margin-bottom:20px;
+
+            color:var(--gold);
+
+            font-size:13px;
+            letter-spacing:4px;
+
+            text-transform:uppercase;
+        }
+
+        .hero-content h1{
+            color:var(--gold-light);
+
+            font-size:clamp(64px,7vw,112px);
+            font-weight:400;
+            line-height:.95;
+
+            text-shadow:
+                0 8px 40px rgba(0,0,0,.6);
+        }
+
+        .ornament{
+            display:flex;
+            align-items:center;
+
+            gap:14px;
+
+            margin:28px 0;
+        }
+
+        .ornament span{
+            width:74px;
+            height:1px;
+
+            background:var(--gold-dark);
+        }
+
+        .ornament b{
+            color:var(--gold);
+
+            font-size:13px;
+        }
+
+        .character-role{
+            max-width:680px;
+
+            color:#e8dccd;
+
+            font-size:24px;
+            line-height:1.5;
+        }
+
+        .character-summary{
+            max-width:680px;
+
+            margin-top:24px;
+
+            color:var(--muted);
+
+            font-size:18px;
+            line-height:1.85;
+        }
+
+        /* ===========================
+                 ОСНОВНОЙ КОНТЕНТ
+        =========================== */
+
+        .character-main{
+            position:relative;
+
+            padding:20px 7vw 100px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--bg),
+                    #0d0c0a
+                );
+        }
+
+        .content-wrap{
+            width:min(1380px,100%);
+
+            margin:0 auto;
+        }
+
+        /* ===========================
+                    ФАКТЫ
+        =========================== */
+
+        .facts{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+
+            gap:1px;
+
+            margin-top:-55px;
+            margin-bottom:90px;
+
+            overflow:hidden;
+
+            border:1px solid var(--border);
+            border-radius:18px;
+
+            background:var(--border);
+
+            box-shadow:0 25px 60px rgba(0,0,0,.35);
+        }
+
+        .fact{
+            min-height:155px;
+
+            padding:30px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(30,27,22,.98),
+                    rgba(19,17,14,.98)
+                );
+        }
+
+        .fact-label{
+            display:block;
+
+            margin-bottom:14px;
+
+            color:var(--gold);
+
+            font-size:11px;
+            letter-spacing:2.2px;
+
+            text-transform:uppercase;
+        }
+
+        .fact-value{
+            color:var(--text);
+
+            font-size:19px;
+            line-height:1.45;
+        }
+
+        /* ===========================
+                    РАЗДЕЛЫ
+        =========================== */
+
+        .section{
+            display:grid;
+            grid-template-columns:260px 1fr;
+
+            gap:70px;
+
+            padding:75px 0;
+
+            border-top:1px solid rgba(201,154,85,.17);
+        }
+
+        .section-title{
+            position:sticky;
+            top:30px;
+
+            align-self:start;
+        }
+
+        .section-title h2{
+            color:var(--gold-light);
+
+            font-size:38px;
+            font-weight:400;
+            line-height:1.15;
+        }
+
+        .section-title::after{
+            content:"";
+
+            display:block;
+
+            width:58px;
+            height:2px;
+
+            margin-top:22px;
+
+            background:var(--gold);
+        }
+
+        .section-content{
+            max-width:880px;
+        }
+
+        .section-content p{
+            color:var(--muted);
+
+            font-size:18px;
+            line-height:1.95;
+        }
+
+        .section-content p + p{
+            margin-top:24px;
+        }
+
+        /* ===========================
+                    ЦИТАТА
+        =========================== */
+
+        .quote{
+            position:relative;
+
+            margin-top:42px;
+            padding:38px 42px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(29,26,22,.9),
+                    rgba(17,15,13,.9)
+                );
+
+            border-left:3px solid var(--gold);
+            border-radius:0 16px 16px 0;
+        }
+
+        .quote::before{
+            content:"“";
+
+            position:absolute;
+
+            top:-24px;
+            left:24px;
+
+            color:rgba(201,154,85,.18);
+
+            font-size:110px;
+            line-height:1;
+        }
+
+        .quote p{
+            position:relative;
+
+            color:#d8cab9;
+
+            font-size:21px;
+            font-style:italic;
+            line-height:1.75;
+
+            z-index:1;
+        }
+
+        .quote-source{
+            display:block;
+
+            margin-top:20px;
+
+            color:var(--gold);
+
+            font-size:12px;
+            letter-spacing:1.5px;
+
+            text-transform:uppercase;
+        }
+
+        /* ===========================
+                    СВЯЗИ
+        =========================== */
+
+        .relations{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+
+            gap:22px;
+        }
+
+        .relation-card{
+            position:relative;
+
+            min-height:220px;
+
+            padding:28px;
+
+            overflow:hidden;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--panel-light),
+                    var(--panel)
+                );
+
+            border:1px solid var(--border);
+            border-radius:16px;
+
+            transition:
+                transform .3s ease,
+                border-color .3s ease,
+                box-shadow .3s ease;
+        }
+
+        .relation-card:hover{
+            transform:translateY(-6px);
+
+            border-color:var(--gold);
+
+            box-shadow:0 18px 40px rgba(0,0,0,.35);
+        }
+
+        .relation-initial{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            width:64px;
+            height:64px;
+
+            margin-bottom:24px;
+
+            color:var(--gold);
+
+            font-size:34px;
+
+            border:1px solid var(--border);
+            border-radius:50%;
+
+            background:#0d0c0a;
+        }
+
+        .relation-type{
+            display:block;
+
+            margin-bottom:9px;
+
+            color:var(--gold);
+
+            font-size:11px;
+            letter-spacing:1.8px;
+
+            text-transform:uppercase;
+        }
+
+        .relation-card h3{
+            color:var(--text);
+
+            font-size:27px;
+            font-weight:400;
+            line-height:1.2;
+        }
+
+        .relation-card p{
+            margin-top:14px;
+
+            color:var(--muted);
+
+            font-size:15px;
+            line-height:1.6;
+        }
+
+        /* ===========================
+              ИСТОРИЧЕСКАЯ СПРАВКА
+        =========================== */
+
+        .history-note{
+            padding:38px 42px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(32,28,23,.94),
+                    rgba(18,16,13,.96)
+                );
+
+            border:1px solid var(--border);
+            border-radius:17px;
+        }
+
+        .history-label{
+            display:block;
+
+            margin-bottom:18px;
+
+            color:var(--gold);
+
+            font-size:11px;
+            letter-spacing:2px;
+
+            text-transform:uppercase;
+        }
+
+        .history-note p{
+            color:var(--muted);
+
+            font-size:18px;
+            line-height:1.95;
+        }
+
+        .history-warning{
+            margin-top:28px;
+            padding-top:22px;
+
+            border-top:1px solid rgba(201,154,85,.16);
+
+            color:#8f7c64;
+
+            font-size:14px;
+            line-height:1.7;
+        }
+
+        /* ===========================
+                    АДАПТАЦИЯ
+        =========================== */
+
+        @media (max-width:1050px){
+
+            .character-hero{
+                min-height:auto;
+
+                padding-top:120px;
+            }
+
+            .hero-inner{
+                grid-template-columns:340px 1fr;
+
+                gap:45px;
+            }
+
+            .portrait{
+                min-height:490px;
+            }
+
+            .portrait-letter{
+                font-size:170px;
+            }
+
+            .facts{
+                grid-template-columns:repeat(2,1fr);
+            }
+
+            .section{
+                grid-template-columns:210px 1fr;
+
+                gap:40px;
+            }
+
+            .relations{
+                grid-template-columns:1fr 1fr;
+            }
+
+        }
+
+        @media (max-width:760px){
+
+            .menu-button{
+                top:14px;
+                left:14px;
+
+                width:48px;
+                height:48px;
+
+                font-size:25px;
+            }
+
+            .sidebar{
+                width:min(280px,86vw);
+            }
+
+            .character-hero{
+                padding:
+                    110px
+                    20px
+                    90px;
+
+                background-position:42% top;
+            }
+
+            .hero-inner{
+                grid-template-columns:1fr;
+
+                gap:45px;
+            }
+
+            .portrait-frame{
+                max-width:330px;
+            }
+
+            .portrait{
+                min-height:430px;
+            }
+
+            .portrait-letter{
+                font-size:145px;
+            }
+
+            .hero-content{
+                text-align:center;
+            }
+
+            .hero-content h1{
+                font-size:58px;
+            }
+
+            .ornament{
+                justify-content:center;
+            }
+
+            .character-role{
+                font-size:20px;
+            }
+
+            .character-summary{
+                font-size:16px;
+            }
+
+            .character-main{
+                padding:
+                    20px
+                    20px
+                    70px;
+            }
+
+            .facts{
+                grid-template-columns:1fr;
+
+                margin-top:-40px;
+                margin-bottom:55px;
+            }
+
+            .fact{
+                min-height:auto;
+            }
+
+            .section{
+                grid-template-columns:1fr;
+
+                gap:30px;
+
+                padding:55px 0;
+            }
+
+            .section-title{
+                position:static;
+            }
+
+            .section-title h2{
+                font-size:34px;
+            }
+
+            .section-content p,
+            .history-note p{
+                font-size:16px;
+            }
+
+            .quote{
+                padding:32px 25px;
+            }
+
+            .quote p{
+                font-size:18px;
+            }
+
+            .relations{
+                grid-template-columns:1fr;
+            }
+
+            .history-note{
+                padding:30px 25px;
+            }
+
+        }
+
+        @media (max-width:430px){
+
+            .hero-content h1{
+                font-size:48px;
+            }
+
+            .portrait{
+                min-height:390px;
+            }
+
+            .character-role{
+                font-size:18px;
+            }
+
+        }
+
+        /* Портрет заполняет рамку полностью */
+
+            .portrait{
+                position:relative;
+
+                width:100%;
+                min-height:0 !important;
+                aspect-ratio:3 / 4;
+
+                display:block;
+
+                overflow:hidden;
+
+                border-radius:17px;
+                background:transparent;
+            }
+
+            .portrait-image{
+                position:absolute;
+                inset:0;
+
+                display:block;
+
+                width:100%;
+                height:100%;
+                max-width:none;
+
+                object-fit:cover;
+                object-position:center;
+            }
+            
+    </style>
+</head>
+
+<body>
+
+    <button
+        class="menu-button"
+        type="button"
+        aria-label="Открыть меню"
+        aria-expanded="false"
+    >
+        ☰
+    </button>
+
+    <div class="overlay"></div>
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <img
+                class="logo-image"
+                src="/nevyansk-tower.png"
+                alt="Невьянская башня"
+            >
+
+            <div class="logo-title">
+                Мир<br>
+                «Невьянской»<br>
+                башни
+            </div>
+
+            <div class="logo-subtitle">
+                Литературная энциклопедия
+            </div>
+
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="/">Главная</a>
+
+            <a class="active" href="/#characters">
+                Персонажи
+            </a>
+
+            <a href="#">Места</a>
+            <a href="#">Хроника</a>
+            <a href="#">О проекте</a>
+
+        </nav>
+
+    </aside>
+
+    <header class="character-hero">
+
+        <div class="hero-inner">
+
+            <div class="portrait-frame">
+
+                <div class="portrait">
+
+                    <img
+                        class="portrait-image"
+                        src="/akinfiy-demidov.png"
+                        alt="Акинфий Демидов"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    Персонаж романа
+                </p>
+
+                <h1>
+                    Акинфий<br>
+                    Демидов
+                </h1>
+
+                <div class="ornament">
+                    <span></span>
+                    <b>◇</b>
+                    <span></span>
+                </div>
+
+                <p class="character-role">
+                    Владелец Невьянских заводов и один из самых
+                    влиятельных промышленников своего времени.
+                </p>
+
+                <p class="character-summary">
+                    Человек огромной воли, власти и внутренней силы.
+                    Его решения определяют судьбу заводов, семьи
+                    и людей, связанных с миром Невьянска.
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="character-main">
+
+        <div class="content-wrap">
+
+            <section class="facts">
+
+                <div class="fact">
+
+                    <span class="fact-label">
+                        Полное имя
+                    </span>
+
+                    <div class="fact-value">
+                        Акинфий Никитич Демидов
+                    </div>
+
+                </div>
+
+                <div class="fact">
+
+                    <span class="fact-label">
+                        Положение
+                    </span>
+
+                    <div class="fact-value">
+                        Владелец Невьянских заводов
+                    </div>
+
+                </div>
+
+                <div class="fact">
+
+                    <span class="fact-label">
+                        Принадлежность
+                    </span>
+
+                    <div class="fact-value">
+                        Династия Демидовых
+                    </div>
+
+                </div>
+
+                <div class="fact">
+
+                    <span class="fact-label">
+                        Первое появление
+                    </span>
+
+                    <div class="fact-value">
+                        Первая глава
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="section">
+
+                <div class="section-title">
+
+                    <h2>
+                        О персонаже
+                    </h2>
+
+                </div>
+
+                <div class="section-content">
+
+                    <p>
+                        Акинфий Демидов предстаёт в романе хозяином
+                        огромного заводского мира и человеком, привыкшим
+                        самостоятельно принимать решения. Его положение
+                        определяется не только богатством и властью,
+                        но и сильным характером, практическим умом
+                        и способностью подчинять обстоятельства
+                        собственной воле.
+                    </p>
+
+                    <p>
+                        Он воспринимает Невьянские заводы как дело,
+                        неотделимое от судьбы его семьи. В общении
+                        с окружающими Акинфий сдержан, внимателен
+                        и требователен. Он редко говорит больше,
+                        чем считает необходимым, и оценивает людей
+                        прежде всего по их поступкам.
+                    </p>
+
+                    <p>
+                        Этот раздел должен содержать только сведения,
+                        которые уже известны читателю к выбранной главе,
+                        не раскрывая дальнейшего развития событий
+                        и скрытых мотивов персонажа.
+                    </p>
+
+                    <div class="quote">
+
+                        <p>
+                            Здесь будет размещена точная цитата Акинфия
+                            Демидова из романа, не содержащая спойлеров.
+                        </p>
+
+                        <span class="quote-source">
+                            Алексей Иванов, «Невьянская башня»
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="section">
+
+                <div class="section-title">
+
+                    <h2>
+                        Связи
+                    </h2>
+
+                </div>
+
+                <div class="section-content">
+
+                    <div class="relations">
+
+                        <article class="relation-card">
+
+                            <div class="relation-initial">
+                                Н
+                            </div>
+
+                            <span class="relation-type">
+                                Отец
+                            </span>
+
+                            <h3>
+                                Никита Демидов
+                            </h3>
+
+                            <p>
+                                Основатель промышленной династии
+                                Демидовых.
+                            </p>
+
+                        </article>
+
+                        <article class="relation-card">
+
+                            <div class="relation-initial">
+                                А
+                            </div>
+
+                            <span class="relation-type">
+                                Семья
+                            </span>
+
+                            <h3>
+                                Анисья Демидова
+                            </h3>
+
+                            <p>
+                                Представительница семьи Демидовых,
+                                связанная с интересами рода.
+                            </p>
+
+                        </article>
+
+                        <article class="relation-card">
+
+                            <div class="relation-initial">
+                                Я
+                            </div>
+
+                            <span class="relation-type">
+                                Окружение
+                            </span>
+
+                            <h3>
+                                Яков Штелин
+                            </h3>
+
+                            <p>
+                                Инженер и человек передовых идей,
+                                появляющийся в мире романа.
+                            </p>
+
+                        </article>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="section">
+
+                <div class="section-title">
+
+                    <h2>
+                        Историческая справка
+                    </h2>
+
+                </div>
+
+                <div class="section-content">
+
+                    <div class="history-note">
+
+                        <span class="history-label">
+                            Реальный исторический деятель
+                        </span>
+
+                        <p>
+                            Здесь будет размещаться достоверная информация
+                            о реальном Акинфии Никитиче Демидове:
+                            годы жизни, происхождение, деятельность,
+                            участие в развитии промышленности и связь
+                            с Невьянскими заводами.
+                        </p>
+
+                        <p>
+                            Историческую биографию следует отделять
+                            от художественного образа, созданного
+                            Алексеем Ивановым в романе.
+                        </p>
+
+                        <div class="history-warning">
+                            Этот раздел создаётся только для персонажей,
+                            имеющих реальный исторический прототип.
+                            На страницах полностью вымышленных героев
+                            его не будет.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        const sidebar = document.querySelector(".sidebar")
+        const overlay = document.querySelector(".overlay")
+        const menuButton = document.querySelector(".menu-button")
+        const sidebarLinks = document.querySelectorAll(".sidebar-menu a")
+
+        let menuTimer = null
+
+        function openMenu() {
+            clearTimeout(menuTimer)
+
+            sidebar.classList.add("open")
+            overlay.classList.add("show")
+            menuButton.classList.add("hide")
+
+            menuButton.setAttribute("aria-expanded", "true")
+
+            document.body.classList.add("menu-open")
+        }
+
+        function closeMenu() {
+            clearTimeout(menuTimer)
+
+            sidebar.classList.remove("open")
+            overlay.classList.remove("show")
+            menuButton.classList.remove("hide")
+
+            menuButton.setAttribute("aria-expanded", "false")
+
+            document.body.classList.remove("menu-open")
+        }
+
+        menuButton.addEventListener("click", openMenu)
+        overlay.addEventListener("click", closeMenu)
+
+        sidebarLinks.forEach((link) => {
+            link.addEventListener("click", closeMenu)
+        })
+
+        sidebar.addEventListener("mouseenter", () => {
+            clearTimeout(menuTimer)
+        })
+
+        sidebar.addEventListener("mouseleave", () => {
+            menuTimer = setTimeout(closeMenu, 250)
+        })
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeMenu()
+            }
+        })
+    </script>
+
+</body>
+
+</html>
