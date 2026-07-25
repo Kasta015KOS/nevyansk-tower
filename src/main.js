@@ -5,7 +5,7 @@ const characters = [
     name: "Акинфий Демидов",
     description:
       "Владелец Невьянских заводов и один из самых влиятельных промышленников России.",
-    page: "/akinfiy-demidov.html",
+    page: "akinfiy-demidov.html",
     active: true
   },
   {
