@@ -1,1405 +1,186 @@
 <!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Акинфий Демидов — Невьянская башня</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #070706;
-            --panel: #151310;
-            --panel-light: #1d1a16;
-            --gold: #c99a55;
-            --gold-light: #e0bd82;
-            --gold-dark: #735129;
-            --text: #f2eadf;
-            --muted: #b6a48b;
-            --border: rgba(201, 154, 85, 0.28);
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            overflow-x: hidden;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Georgia, "Times New Roman", serif;
-        }
-
-        body.menu-open {
-            overflow: hidden;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        button {
-            font: inherit;
-        }
-
-        .menu-button {
-            position: fixed;
-            top: 22px;
-            left: 22px;
-            z-index: 2000;
-            display: flex;
-            width: 54px;
-            height: 54px;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(201, 154, 85, 0.38);
-            border-radius: 12px;
-            background: rgba(15, 14, 12, 0.92);
-            color: var(--gold);
-            font-size: 28px;
-            line-height: 1;
-            cursor: pointer;
-            transition:
-                opacity 0.25s ease,
-                visibility 0.25s ease,
-                transform 0.25s ease,
-                background 0.25s ease,
-                border-color 0.25s ease;
-        }
-
-        .menu-button:hover {
-            transform: scale(1.05);
-            border-color: var(--gold);
-            background: #2a2016;
-        }
-
-        .menu-button.hide {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(-8px) scale(0.88);
-        }
-
-        .overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 1400;
-            visibility: hidden;
-            background: rgba(0, 0, 0, 0.58);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s ease, visibility 0.35s ease;
-        }
-
-        .overlay.show {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1700;
-            display: flex;
-            width: 280px;
-            height: 100vh;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 26px 38px;
-            overflow-y: auto;
-            border-right: 1px solid rgba(201, 154, 85, 0.25);
-            background: linear-gradient(180deg, #22170f, #15100c);
-            box-shadow: 24px 0 55px rgba(0, 0, 0, 0.48);
-            transform: translateX(-100%);
-            transition: transform 0.35s ease;
-        }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-
-        .logo {
-            width: 100%;
-            text-align: center;
-        }
-
-        .logo-image {
-            width: 72px;
-            height: 96px;
-            margin: 0 auto 12px;
-            object-fit: contain;
-            background: transparent;
-            filter: brightness(1.08) contrast(1.05);
-            mix-blend-mode: screen;
-        }
-
-        .logo-title {
-            color: var(--gold);
-            font-size: 28px;
-            line-height: 1.2;
-        }
-
-        .logo-subtitle {
-            margin-top: 12px;
-            color: #9e886a;
-            font-size: 11px;
-            letter-spacing: 1.8px;
-            line-height: 1.5;
-            text-transform: uppercase;
-        }
-
-        .sidebar-menu {
-            width: 100%;
-            margin-top: 38px;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 17px 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: #cdb898;
-            text-align: center;
-            transition: color 0.25s ease, background 0.25s ease;
-        }
-
-        .sidebar-menu a:last-child {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar-menu a:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--gold);
-        }
-
-        .sidebar-menu .active {
-            color: var(--gold);
-        }
-
-        .character-hero {
-            position: relative;
-            display: flex;
-            min-height: 720px;
-            align-items: center;
-            padding: 90px 7vw 110px;
-            overflow: hidden;
-            background:
-                linear-gradient(
-                    90deg,
-                    rgba(5, 5, 5, 0.25) 0%,
-                    rgba(5, 5, 5, 0.46) 45%,
-                    rgba(5, 5, 5, 0.88) 100%
-                ),
-                linear-gradient(
-                    180deg,
-                    rgba(5, 5, 5, 0.12) 0%,
-                    rgba(5, 5, 5, 0.32) 65%,
-                    var(--bg) 100%
-                ),
-                url("background.png") center top / cover no-repeat;
-        }
-
-        .character-hero::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(
-                    circle at 26% 42%,
-                    rgba(201, 154, 85, 0.13),
-                    transparent 36%
-                );
-            pointer-events: none;
-        }
-
-        .hero-inner {
-            position: relative;
-            z-index: 2;
-            display: grid;
-            width: min(1380px, 100%);
-            grid-template-columns: minmax(320px, 480px) 1fr;
-            align-items: center;
-            gap: 80px;
-            margin: 0 auto;
-        }
-
-        .portrait-frame {
-            position: relative;
-            width: 100%;
-            max-width: 430px;
-            margin: 0 auto;
-            padding: 9px;
-            border-radius: 24px;
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(201, 154, 85, 0.8),
-                    rgba(201, 154, 85, 0.1),
-                    rgba(201, 154, 85, 0.45)
-                );
-            box-shadow:
-                0 35px 90px rgba(0, 0, 0, 0.55),
-                0 0 35px rgba(201, 154, 85, 0.08);
-        }
-
-        .portrait-frame::before,
-        .portrait-frame::after {
-            content: "";
-            position: absolute;
-            width: 44px;
-            height: 44px;
-            border-color: var(--gold);
-            border-style: solid;
-            pointer-events: none;
-        }
-
-        .portrait-frame::before {
-            top: -8px;
-            left: -8px;
-            border-width: 2px 0 0 2px;
-        }
-
-        .portrait-frame::after {
-            right: -8px;
-            bottom: -8px;
-            border-width: 0 2px 2px 0;
-        }
-
-        .portrait {
-            position: relative;
-            display: block;
-            width: 100%;
-            aspect-ratio: 3 / 4;
-            overflow: hidden;
-            border-radius: 17px;
-            background: transparent;
-        }
-
-        .portrait-image {
-            position: absolute;
-            inset: 0;
-            display: block;
-            width: 100%;
-            height: 100%;
-            max-width: none;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        .hero-content {
-            max-width: 760px;
-        }
-
-        .eyebrow {
-            margin-bottom: 20px;
-            color: var(--gold);
-            font-size: 13px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .hero-content h1 {
-            color: var(--gold-light);
-            font-size: clamp(64px, 7vw, 112px);
-            font-weight: 400;
-            line-height: 0.95;
-            text-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        .ornament {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin: 28px 0;
-        }
-
-        .ornament span {
-            width: 74px;
-            height: 1px;
-            background: var(--gold-dark);
-        }
-
-        .ornament b {
-            color: var(--gold);
-            font-size: 13px;
-        }
-
-        .character-role {
-            max-width: 680px;
-            color: #e8dccd;
-            font-size: 24px;
-            line-height: 1.5;
-        }
-
-        .character-summary {
-            max-width: 680px;
-            margin-top: 24px;
-            color: var(--muted);
-            font-size: 18px;
-            line-height: 1.85;
-        }
-
-        .character-main {
-            position: relative;
-            padding: 0 7vw 100px;
-            background: linear-gradient(180deg, var(--bg), #0d0c0a);
-        }
-
-        .content-wrap {
-            width: min(1380px, 100%);
-            margin: 0 auto;
-        }
-
-        .section {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 70px;
-            padding: 75px 0;
-            border-top: 1px solid rgba(201, 154, 85, 0.17);
-        }
-
-        .section-title {
-            position: sticky;
-            top: 30px;
-            align-self: start;
-        }
-
-        .section-title h2 {
-            color: var(--gold-light);
-            font-size: 38px;
-            font-weight: 400;
-            line-height: 1.15;
-        }
-
-        .section-title::after {
-            content: "";
-            display: block;
-            width: 58px;
-            height: 2px;
-            margin-top: 22px;
-            background: var(--gold);
-        }
-
-        .section-content {
-            max-width: 880px;
-        }
-
-        .section-content p {
-            color: var(--muted);
-            font-size: 18px;
-            line-height: 1.95;
-        }
-
-        .section-content p + p {
-            margin-top: 24px;
-        }
-
-        .subsection + .subsection {
-            margin-top: 36px;
-        }
-
-        .subsection h3 {
-            margin-bottom: 16px;
-            color: var(--gold-light);
-            font-size: 25px;
-            font-weight: 400;
-        }
-
-        .quote {
-            position: relative;
-            margin-top: 42px;
-            padding: 38px 42px;
-            border-left: 3px solid var(--gold);
-            border-radius: 0 16px 16px 0;
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(29, 26, 22, 0.9),
-                    rgba(17, 15, 13, 0.9)
-                );
-        }
-
-        .quote::before {
-            content: "“";
-            position: absolute;
-            top: -24px;
-            left: 24px;
-            color: rgba(201, 154, 85, 0.18);
-            font-size: 110px;
-            line-height: 1;
-        }
-
-        .quote p {
-            position: relative;
-            z-index: 1;
-            color: #d8cab9;
-            font-size: 21px;
-            font-style: italic;
-            line-height: 1.75;
-        }
-
-        .quote-source {
-            display: block;
-            margin-top: 20px;
-            color: var(--gold);
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .history-note {
-            padding: 38px 42px;
-            border: 1px solid var(--border);
-            border-radius: 17px;
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(32, 28, 23, 0.94),
-                    rgba(18, 16, 13, 0.96)
-                );
-        }
-
-        .history-label {
-            display: block;
-            margin-bottom: 18px;
-            color: var(--gold);
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .history-warning {
-            margin-top: 28px;
-            padding-top: 22px;
-            border-top: 1px solid rgba(201, 154, 85, 0.16);
-            color: #8f7c64;
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-        .relation-group + .relation-group {
-            margin-top: 54px;
-        }
-
-        .relation-group-title {
-            margin-bottom: 24px;
-            color: var(--gold-light);
-            font-size: 25px;
-            font-weight: 400;
-            line-height: 1.3;
-        }
-
-        .relations {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 28px 24px;
-            align-items: start;
-        }
-
-        .relation-card {
-            display: flex;
-            min-width: 0;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .relation-link {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            color: inherit;
-        }
-
-        .relation-photo {
-            position: relative;
-            width: 112px;
-            height: 112px;
-            overflow: hidden;
-            border: 2px solid rgba(201, 154, 85, 0.48);
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at 35% 30%, #2c241b, #15120f 70%);
-            box-shadow:
-                0 12px 28px rgba(0, 0, 0, 0.32),
-                inset 0 0 0 5px rgba(0, 0, 0, 0.22);
-            transition:
-                transform 0.28s ease,
-                border-color 0.28s ease,
-                box-shadow 0.28s ease;
-        }
-
-        .relation-link:hover .relation-photo {
-            transform: translateY(-4px) scale(1.03);
-            border-color: var(--gold);
-            box-shadow:
-                0 18px 34px rgba(0, 0, 0, 0.42),
-                0 0 0 4px rgba(201, 154, 85, 0.08);
-        }
-
-        .relation-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        .relation-fallback {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold-light);
-            font-size: 42px;
-            line-height: 1;
-        }
-
-        .relation-label {
-            max-width: 145px;
-        }
-
-        .relation-name {
-            color: var(--text);
-            font-size: 18px;
-            font-weight: 400;
-            line-height: 1.25;
-        }
-
-        .relation-type {
-            display: block;
-            margin-top: 6px;
-            color: var(--gold);
-            font-size: 10px;
-            letter-spacing: 1.3px;
-            line-height: 1.35;
-            text-transform: uppercase;
-        }
-
-        .interesting-facts {
-            display: grid;
-            gap: 18px;
-        }
-
-        .interesting-fact {
-            position: relative;
-            padding: 24px 26px 24px 52px;
-            border: 1px solid rgba(201, 154, 85, 0.18);
-            border-radius: 14px;
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(29, 26, 22, 0.82),
-                    rgba(17, 15, 13, 0.82)
-                );
-            color: var(--muted);
-            font-size: 17px;
-            line-height: 1.75;
-        }
-
-        .interesting-fact::before {
-            content: "◆";
-            position: absolute;
-            top: 25px;
-            left: 24px;
-            color: var(--gold);
-            font-size: 12px;
-        }
-
-        @media (max-width: 1050px) {
-            .character-hero {
-                min-height: auto;
-                padding-top: 120px;
-            }
-
-            .hero-inner {
-                grid-template-columns: 340px 1fr;
-                gap: 45px;
-            }
-
-            .section {
-                grid-template-columns: 210px 1fr;
-                gap: 40px;
-            }
-
-            .relations {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 760px) {
-            .menu-button {
-                top: 14px;
-                left: 14px;
-                width: 48px;
-                height: 48px;
-                font-size: 25px;
-            }
-
-            .sidebar {
-                width: min(280px, 86vw);
-            }
-
-            .character-hero {
-                padding: 110px 20px 90px;
-                background-position: 42% top;
-            }
-
-            .hero-inner {
-                grid-template-columns: 1fr;
-                gap: 45px;
-            }
-
-            .portrait-frame {
-                max-width: 330px;
-            }
-
-            .hero-content {
-                text-align: center;
-            }
-
-            .hero-content h1 {
-                font-size: 58px;
-            }
-
-            .ornament {
-                justify-content: center;
-            }
-
-            .character-role {
-                font-size: 20px;
-            }
-
-            .character-summary {
-                font-size: 16px;
-            }
-
-            .character-main {
-                padding: 20px 20px 70px;
-            }
-
-            .section {
-                grid-template-columns: 1fr;
-                gap: 30px;
-                padding: 55px 0;
-            }
-
-            .section-title {
-                position: static;
-            }
-
-            .section-title h2 {
-                font-size: 34px;
-            }
-
-            .section-content p,
-            .history-note p {
-                font-size: 16px;
-            }
-
-            .quote {
-                padding: 32px 25px;
-            }
-
-            .quote p {
-                font-size: 18px;
-            }
-
-            .history-note {
-                padding: 30px 25px;
-            }
-        }
-
-        @media (max-width: 430px) {
-            .hero-content h1 {
-                font-size: 46px;
-            }
-
-            .character-role {
-                font-size: 18px;
-            }
-
-            .character-summary {
-                line-height: 1.7;
-            }
-
-            .section-title h2 {
-                font-size: 31px;
-            }
-
-            .relations {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 24px 16px;
-            }
-
-            .relation-photo {
-                width: 96px;
-                height: 96px;
-            }
-
-            .relation-name {
-                font-size: 16px;
-            }
-        }
-
-
-        /* ===== Общая адаптация страницы: 320 px — 4K ===== */
-        :root {
-            --page-padding: clamp(16px, 5vw, 96px);
-            --content-width: 1380px;
-        }
-
-        .character-hero,
-        .character-main {
-            padding-left: var(--page-padding);
-            padding-right: var(--page-padding);
-        }
-
-        .hero-inner,
-        .content-wrap {
-            width: min(var(--content-width), 100%);
-        }
-
-        .hero-content h1 {
-            overflow-wrap: anywhere;
-            font-size: clamp(42px, 6.5vw, 112px);
-        }
-
-        .character-role {
-            font-size: clamp(18px, 1.7vw, 24px);
-        }
-
-        .character-summary,
-        .section-content p {
-            font-size: clamp(16px, 1.15vw, 18px);
-        }
-
-        .section-title h2 {
-            overflow-wrap: anywhere;
-            font-size: clamp(30px, 3vw, 38px);
-        }
-
-        .relations {
-            grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
-        }
-
-        @media (min-width: 1700px) {
-            :root {
-                --content-width: 1520px;
-            }
-
-            .hero-inner {
-                grid-template-columns: minmax(380px, 500px) minmax(0, 1fr);
-                gap: clamp(70px, 6vw, 120px);
-            }
-
-            .section {
-                grid-template-columns: 300px minmax(0, 1fr);
-                gap: 90px;
-            }
-
-            .section-content {
-                max-width: 980px;
-            }
-        }
-
-        @media (max-width: 1180px) {
-            .hero-inner {
-                grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
-                gap: clamp(34px, 5vw, 58px);
-            }
-
-            .section {
-                grid-template-columns: 220px minmax(0, 1fr);
-                gap: 42px;
-            }
-
-            .section-content {
-                min-width: 0;
-            }
-        }
-
-        @media (max-width: 860px) {
-            .character-hero {
-                min-height: auto;
-                padding-top: 106px;
-                padding-bottom: 76px;
-            }
-
-            .hero-inner {
-                grid-template-columns: 1fr;
-                gap: 42px;
-            }
-
-            .portrait-frame {
-                width: min(420px, 86vw);
-            }
-
-            .hero-content {
-                max-width: 680px;
-                margin: 0 auto;
-                text-align: center;
-            }
-
-            .hero-content h1 br {
-                display: none;
-            }
-
-            .ornament {
-                justify-content: center;
-            }
-
-            .character-main {
-                padding-top: 0;
-                padding-bottom: 72px;
-            }
-
-            .section {
-                grid-template-columns: 1fr;
-                gap: 26px;
-                padding: 56px 0;
-            }
-
-            .section-title {
-                position: static;
-            }
-
-            .section-title::after {
-                margin-top: 16px;
-            }
-
-            .section-content {
-                max-width: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            :root {
-                --page-padding: 18px;
-            }
-
-            .menu-button {
-                top: max(12px, env(safe-area-inset-top));
-                left: max(12px, env(safe-area-inset-left));
-                width: 48px;
-                height: 48px;
-                border-radius: 11px;
-            }
-
-            .sidebar {
-                width: min(300px, 88vw);
-                padding-top: max(26px, calc(env(safe-area-inset-top) + 14px));
-                padding-bottom: max(30px, calc(env(safe-area-inset-bottom) + 18px));
-            }
-
-            .character-hero {
-                padding-top: 92px;
-                padding-bottom: 62px;
-                background-position: 38% top;
-            }
-
-            .portrait-frame {
-                width: min(330px, 88vw);
-                padding: 7px;
-                border-radius: 20px;
-            }
-
-            .portrait {
-                border-radius: 14px;
-            }
-
-            .eyebrow {
-                margin-bottom: 14px;
-                font-size: 11px;
-                letter-spacing: 2.6px;
-            }
-
-            .hero-content h1 {
-                font-size: clamp(38px, 12.5vw, 58px);
-                line-height: 1.02;
-            }
-
-            .ornament {
-                margin: 22px 0;
-            }
-
-            .character-summary {
-                margin-top: 18px;
-                line-height: 1.72;
-            }
-
-            .section {
-                padding: 46px 0;
-            }
-
-            .subsection + .subsection {
-                margin-top: 30px;
-            }
-
-            .subsection h3,
-            .relation-group-title {
-                font-size: 22px;
-            }
-
-            .quote,
-            .history-note {
-                padding: 28px 22px;
-            }
-
-            .quote {
-                margin-top: 34px;
-            }
-
-            .interesting-fact {
-                padding: 22px 20px 22px 46px;
-            }
-
-            .interesting-fact::before {
-                left: 20px;
-            }
-
-            .relations {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 26px 14px;
-            }
-
-            .relation-photo {
-                width: clamp(88px, 25vw, 108px);
-                height: clamp(88px, 25vw, 108px);
-            }
-
-            .relation-name {
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 350px) {
-            :root {
-                --page-padding: 14px;
-            }
-
-            .hero-content h1 {
-                font-size: 38px;
-            }
-
-            .relations {
-                gap-inline: 8px;
-            }
-
-            .relation-photo {
-                width: 82px;
-                height: 82px;
-            }
-
-            .relation-label {
-                max-width: 120px;
-            }
-
-            .quote,
-            .history-note {
-                padding-left: 18px;
-                padding-right: 18px;
-            }
-        }
-
-        @media (hover: none) {
-            .menu-button:hover,
-            .relation-link:hover .relation-photo {
-                transform: none;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-
-            *,
-            *::before,
-            *::after {
-                scroll-behavior: auto !important;
-                transition-duration: 0.01ms !important;
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-            }
-        }
-
-    </style>
-</head>
-
-<body>
+    <link href="./css/character-page.css" rel="stylesheet" />
+  </head>
+  <body>
     <button
-        class="menu-button"
-        type="button"
-        aria-label="Открыть меню"
-        aria-expanded="false"
+      aria-expanded="false"
+      aria-label="Открыть меню"
+      class="menu-button"
+      type="button"
     >
-        ☰
+      ☰
     </button>
-
     <div class="overlay"></div>
-
     <aside class="sidebar">
-        <div class="logo">
-            <img
-                class="logo-image"
-                src="nevyansk-tower.png"
-                alt="Невьянская башня"
-            >
-
-            <div class="logo-title">
-                Мир<br>
-                «Невьянской»<br>
-                башни
-            </div>
-
-            <div class="logo-subtitle">
-                Литературная энциклопедия
-            </div>
+      <div class="logo">
+        <img
+          alt="Невьянская башня"
+          class="logo-image"
+          src="nevyansk-tower.png"
+        />
+        <div class="logo-title">
+          Мир<br />
+          «Невьянской»<br />
+          башни
         </div>
-
-        <nav class="sidebar-menu">
-            <a href="./">Главная</a>
-            <a class="active" href="./#characters">Персонажи</a>
-            <a href="#">Места</a>
-            <a href="#">Хроника</a>
-            <a href="#">О проекте</a>
-        </nav>
+        <div class="logo-subtitle">Литературная энциклопедия</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="./">Главная</a>
+        <a class="active" href="./#characters">Персонажи</a>
+        <a href="#">Места</a>
+        <a href="#">Хроника</a>
+        <a href="#">О проекте</a>
+      </nav>
     </aside>
-
     <header class="character-hero">
-        <div class="hero-inner">
-            <div class="portrait-frame">
-                <div class="portrait">
-                    <img
-                        class="portrait-image"
-                        src="akinfiy-demidov.png"
-                        alt="Акинфий Никитич Демидов"
-                    >
-                </div>
-            </div>
-
-            <div class="hero-content">
-                <p class="eyebrow">Персонаж романа</p>
-
-                <h1>
-                    Акинфий Никитич<br>
-                    Демидов
-                </h1>
-
-                <div class="ornament">
-                    <span></span>
-                    <b>◇</b>
-                    <span></span>
-                </div>
-
-                <p class="character-role">
-                    Владелец Невьянских заводов и один из самых
-                    влиятельных промышленников своего времени.
-                </p>
-
-                <p class="character-summary">
-                    Человек огромной воли, власти и внутренней силы.
-                    Его решения определяют судьбу заводов, семьи
-                    и людей, связанных с миром Невьянска.
-                </p>
-            </div>
+      <div class="hero-inner">
+        <div class="portrait-frame">
+          <div class="portrait">
+            <img
+              alt="Акинфий Никитич Демидов"
+              class="portrait-image"
+              src="akinfiy-demidov.png"
+            />
+          </div>
         </div>
+        <div class="hero-content">
+          <p class="eyebrow">Персонаж романа</p>
+          <h1>
+            Акинфий Никитич<br />
+            Демидов
+          </h1>
+          <div class="ornament">
+            <span></span>
+            <b>◇</b>
+            <span></span>
+          </div>
+          <p class="character-role">
+            Владелец Невьянских заводов и один из самых влиятельных
+            промышленников своего времени.
+          </p>
+          <p class="character-summary">
+            Человек огромной воли, власти и внутренней силы. Его решения
+            определяют судьбу заводов, семьи и людей, связанных с миром
+            Невьянска.
+          </p>
+        </div>
+      </div>
     </header>
-
     <main class="character-main">
-        <div class="content-wrap">
-
-            <section class="section" id="about">
-                <div class="section-title">
-                    <h2>О персонаже</h2>
-                </div>
-
-                <div class="section-content">
-                    <div class="subsection">
-                        <h3>Биография и роль</h3>
-
-                        <p>
-                            Акинфий Демидов предстаёт в романе хозяином
-                            огромного заводского мира и человеком, привыкшим
-                            самостоятельно принимать решения. Его положение
-                            определяется не только богатством и властью,
-                            но и сильным характером, практическим умом
-                            и способностью подчинять обстоятельства
-                            собственной воле.
-                        </p>
-
-                        <p>
-                            Невьянские заводы для него — не просто имущество,
-                            а дело семьи и основа порядка, за который он
-                            отвечает лично. Через образ Акинфия раскрывается
-                            мир уральской промышленной державы, где хозяйственная
-                            власть соединяется с личной ответственностью.
-                        </p>
-                    </div>
-
-                    <div class="subsection">
-                        <h3>Характер</h3>
-
-                        <p>
-                            В общении с окружающими Акинфий сдержан,
-                            внимателен и требователен. Он редко говорит больше,
-                            чем считает необходимым, и оценивает людей прежде
-                            всего по их поступкам. В нём сочетаются расчётливость,
-                            твёрдость, внутренняя собранность и привычка
-                            принимать окончательное решение самому.
-                        </p>
-                    </div>
-
-                    <div class="quote">
-                        <p>
-                            Точная цитата из романа будет добавлена после
-                            отдельной проверки текста, чтобы сохранить
-                            дословность и не раскрыть дальнейшие события.
-                        </p>
-
-                        <span class="quote-source">
-                            Алексей Иванов, «Невьянская башня»
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="history">
-                <div class="section-title">
-                    <h2>Историческая справка</h2>
-                </div>
-
-                <div class="section-content">
-                    <div class="history-note">
-                        <span class="history-label">
-                            Реальный исторический деятель
-                        </span>
-
-                        <p>
-                            Историческая часть страницы предназначена
-                            для сведений о реальном Акинфии Никитиче Демидове:
-                            его происхождении, деятельности, участии в развитии
-                            уральской промышленности и связи с Невьянскими
-                            заводами.
-                        </p>
-
-                        <p>
-                            Историческую биографию необходимо отделять
-                            от художественного образа, созданного Алексеем
-                            Ивановым. Поэтому этот раздел будет дополняться
-                            только проверенными сведениями из надёжных источников.
-                        </p>
-
-                        <div class="history-warning">
-                            Такой раздел используется только на страницах
-                            персонажей, имеющих реальный исторический прототип.
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="relations">
-                <div class="section-title">
-                    <h2>Связи</h2>
-                </div>
-
-                <div class="section-content">
-                    <div class="relation-group">
-                        <h3 class="relation-group-title">
-                            Семейные связи
-                        </h3>
-
-                        <div class="relations" data-relations="family"></div>
-                    </div>
-
-                    <div class="relation-group">
-                        <h3 class="relation-group-title">
-                            Сюжетные связи
-                        </h3>
-
-                        <div class="relations" data-relations="story"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="facts">
-                <div class="section-title">
-                    <h2>Интересные факты</h2>
-                </div>
-
-                <div class="section-content">
-                    <div class="interesting-facts">
-                        <div class="interesting-fact">
-                            Этот раздел будет собирать краткие детали
-                            художественного образа и проверенные сведения
-                            об историческом прототипе без пересказа сюжета.
-                        </div>
-
-                        <div class="interesting-fact">
-                            Новые факты следует добавлять постепенно:
-                            после чтения соответствующих глав и отдельной
-                            проверки исторических источников.
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </div>
+      <div class="content-wrap">
+        <section class="section" id="about">
+          <div class="section-title">
+            <h2>О персонаже</h2>
+          </div>
+          <div class="section-content">
+            <div class="subsection">
+              <h3>Биография и роль</h3>
+              <p>
+                Акинфий Демидов предстаёт в романе хозяином огромного заводского
+                мира и человеком, привыкшим самостоятельно принимать решения.
+                Его положение определяется не только богатством и властью, но и
+                сильным характером, практическим умом и способностью подчинять
+                обстоятельства собственной воле.
+              </p>
+              <p>
+                Невьянские заводы для него — не просто имущество, а дело семьи и
+                основа порядка, за который он отвечает лично. Через образ
+                Акинфия раскрывается мир уральской промышленной державы, где
+                хозяйственная власть соединяется с личной ответственностью.
+              </p>
+            </div>
+            <div class="subsection">
+              <h3>Характер</h3>
+              <p>
+                В общении с окружающими Акинфий сдержан, внимателен и
+                требователен. Он редко говорит больше, чем считает необходимым,
+                и оценивает людей прежде всего по их поступкам. В нём сочетаются
+                расчётливость, твёрдость, внутренняя собранность и привычка
+                принимать окончательное решение самому.
+              </p>
+            </div>
+            <div class="quote">
+              <p>
+                Точная цитата из романа будет добавлена после отдельной проверки
+                текста, чтобы сохранить дословность и не раскрыть дальнейшие
+                события.
+              </p>
+              <span class="quote-source">
+                Алексей Иванов, «Невьянская башня»
+              </span>
+            </div>
+          </div>
+        </section>
+        <section class="section" id="history">
+          <div class="section-title">
+            <h2>Историческая справка</h2>
+          </div>
+          <div class="section-content">
+            <div class="history-note">
+              <span class="history-label"> Реальный исторический деятель </span>
+              <p>
+                Историческая часть страницы предназначена для сведений о
+                реальном Акинфии Никитиче Демидове: его происхождении,
+                деятельности, участии в развитии уральской промышленности и
+                связи с Невьянскими заводами.
+              </p>
+              <p>
+                Историческую биографию необходимо отделять от художественного
+                образа, созданного Алексеем Ивановым. Поэтому этот раздел будет
+                дополняться только проверенными сведениями из надёжных
+                источников.
+              </p>
+              <div class="history-warning">
+                Такой раздел используется только на страницах персонажей,
+                имеющих реальный исторический прототип.
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="section" id="relations">
+          <div class="section-title">
+            <h2>Связи</h2>
+          </div>
+          <div class="section-content">
+            <div class="relation-group">
+              <h3 class="relation-group-title">Семейные связи</h3>
+              <div class="relations" data-relations="family"></div>
+            </div>
+            <div class="relation-group">
+              <h3 class="relation-group-title">Сюжетные связи</h3>
+              <div class="relations" data-relations="story"></div>
+            </div>
+          </div>
+        </section>
+        <section class="section" id="facts">
+          <div class="section-title">
+            <h2>Интересные факты</h2>
+          </div>
+          <div class="section-content">
+            <div class="interesting-facts">
+              <div class="interesting-fact">
+                Этот раздел будет собирать краткие детали художественного образа
+                и проверенные сведения об историческом прототипе без пересказа
+                сюжета.
+              </div>
+              <div class="interesting-fact">
+                Новые факты следует добавлять постепенно: после чтения
+                соответствующих глав и отдельной проверки исторических
+                источников.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
-    <script>
-        const characterRelations = {
-            family: [
-                {
-                    name: "Никита Демидов",
-                    type: "Отец",
-                    image: "nikita-demidov.png",
-                    page: "#"
-                },
-                {
-                    name: "Анисья Демидова",
-                    type: "Семья",
-                    image: "anisya-demidova.png",
-                    page: "#"
-                }
-            ],
-            story: [
-                {
-                    name: "Яков Штелин",
-                    type: "Сюжетная связь",
-                    image: "yakov-shtelin.png",
-                    page: "#"
-                },
-                {
-                    name: "Василий Татищев",
-                    type: "Сюжетная связь",
-                    image: "vasiliy-tatishchev.png",
-                    page: "#"
-                }
-            ]
-        };
-
-        function createRelationCard(character) {
-            const card = document.createElement("article");
-            card.className = "relation-card";
-
-            const link = document.createElement("a");
-            link.className = "relation-link";
-            link.href = character.page || "#";
-            link.setAttribute("aria-label", character.name);
-
-            const photo = document.createElement("div");
-            photo.className = "relation-photo";
-
-            const fallback = document.createElement("span");
-            fallback.className = "relation-fallback";
-            fallback.textContent = character.name.trim().charAt(0);
-
-            const image = document.createElement("img");
-            image.className = "relation-image";
-            image.src = character.image;
-            image.alt = character.name;
-            image.loading = "lazy";
-
-            image.addEventListener("load", () => {
-                fallback.hidden = true;
-            });
-
-            image.addEventListener("error", () => {
-                image.remove();
-                fallback.hidden = false;
-            });
-
-            const label = document.createElement("div");
-            label.className = "relation-label";
-
-            const name = document.createElement("h3");
-            name.className = "relation-name";
-            name.textContent = character.name;
-
-            const type = document.createElement("span");
-            type.className = "relation-type";
-            type.textContent = character.type;
-
-            photo.append(fallback, image);
-            label.append(name, type);
-            link.append(photo, label);
-            card.append(link);
-
-            return card;
-        }
-
-        document.querySelectorAll("[data-relations]").forEach((container) => {
-            const groupName = container.dataset.relations;
-            const relations = characterRelations[groupName] || [];
-
-            relations.forEach((character) => {
-                container.append(createRelationCard(character));
-            });
-        });
-
-        const sidebar = document.querySelector(".sidebar");
-        const overlay = document.querySelector(".overlay");
-        const menuButton = document.querySelector(".menu-button");
-        const sidebarLinks = document.querySelectorAll(".sidebar-menu a");
-
-        let menuTimer = null;
-
-        function openMenu() {
-            clearTimeout(menuTimer);
-
-            sidebar.classList.add("open");
-            overlay.classList.add("show");
-            menuButton.classList.add("hide");
-            menuButton.setAttribute("aria-expanded", "true");
-            document.body.classList.add("menu-open");
-        }
-
-        function closeMenu() {
-            clearTimeout(menuTimer);
-
-            sidebar.classList.remove("open");
-            overlay.classList.remove("show");
-            menuButton.classList.remove("hide");
-            menuButton.setAttribute("aria-expanded", "false");
-            document.body.classList.remove("menu-open");
-        }
-
-        menuButton.addEventListener("click", openMenu);
-        overlay.addEventListener("click", closeMenu);
-
-        sidebarLinks.forEach((link) => {
-            link.addEventListener("click", closeMenu);
-        });
-
-        sidebar.addEventListener("mouseenter", () => {
-            clearTimeout(menuTimer);
-        });
-
-        sidebar.addEventListener("mouseleave", () => {
-            menuTimer = setTimeout(closeMenu, 250);
-        });
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-                closeMenu();
-            }
-        });
-    </script>
-</body>
+    <script defer="" src="./js/character-page.js"></script>
+  </body>
 </html>
