@@ -755,6 +755,289 @@
                 font-size: 16px;
             }
         }
+
+
+        /* ===== Общая адаптация страницы: 320 px — 4K ===== */
+        :root {
+            --page-padding: clamp(16px, 5vw, 96px);
+            --content-width: 1380px;
+        }
+
+        .character-hero,
+        .character-main {
+            padding-left: var(--page-padding);
+            padding-right: var(--page-padding);
+        }
+
+        .hero-inner,
+        .content-wrap {
+            width: min(var(--content-width), 100%);
+        }
+
+        .hero-content h1 {
+            overflow-wrap: anywhere;
+            font-size: clamp(42px, 6.5vw, 112px);
+        }
+
+        .character-role {
+            font-size: clamp(18px, 1.7vw, 24px);
+        }
+
+        .character-summary,
+        .section-content p {
+            font-size: clamp(16px, 1.15vw, 18px);
+        }
+
+        .section-title h2 {
+            overflow-wrap: anywhere;
+            font-size: clamp(30px, 3vw, 38px);
+        }
+
+        .relations {
+            grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+        }
+
+        @media (min-width: 1700px) {
+            :root {
+                --content-width: 1520px;
+            }
+
+            .hero-inner {
+                grid-template-columns: minmax(380px, 500px) minmax(0, 1fr);
+                gap: clamp(70px, 6vw, 120px);
+            }
+
+            .section {
+                grid-template-columns: 300px minmax(0, 1fr);
+                gap: 90px;
+            }
+
+            .section-content {
+                max-width: 980px;
+            }
+        }
+
+        @media (max-width: 1180px) {
+            .hero-inner {
+                grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+                gap: clamp(34px, 5vw, 58px);
+            }
+
+            .section {
+                grid-template-columns: 220px minmax(0, 1fr);
+                gap: 42px;
+            }
+
+            .section-content {
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .character-hero {
+                min-height: auto;
+                padding-top: 106px;
+                padding-bottom: 76px;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 42px;
+            }
+
+            .portrait-frame {
+                width: min(420px, 86vw);
+            }
+
+            .hero-content {
+                max-width: 680px;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .hero-content h1 br {
+                display: none;
+            }
+
+            .ornament {
+                justify-content: center;
+            }
+
+            .character-main {
+                padding-top: 0;
+                padding-bottom: 72px;
+            }
+
+            .section {
+                grid-template-columns: 1fr;
+                gap: 26px;
+                padding: 56px 0;
+            }
+
+            .section-title {
+                position: static;
+            }
+
+            .section-title::after {
+                margin-top: 16px;
+            }
+
+            .section-content {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --page-padding: 18px;
+            }
+
+            .menu-button {
+                top: max(12px, env(safe-area-inset-top));
+                left: max(12px, env(safe-area-inset-left));
+                width: 48px;
+                height: 48px;
+                border-radius: 11px;
+            }
+
+            .sidebar {
+                width: min(300px, 88vw);
+                padding-top: max(26px, calc(env(safe-area-inset-top) + 14px));
+                padding-bottom: max(30px, calc(env(safe-area-inset-bottom) + 18px));
+            }
+
+            .character-hero {
+                padding-top: 92px;
+                padding-bottom: 62px;
+                background-position: 38% top;
+            }
+
+            .portrait-frame {
+                width: min(330px, 88vw);
+                padding: 7px;
+                border-radius: 20px;
+            }
+
+            .portrait {
+                border-radius: 14px;
+            }
+
+            .eyebrow {
+                margin-bottom: 14px;
+                font-size: 11px;
+                letter-spacing: 2.6px;
+            }
+
+            .hero-content h1 {
+                font-size: clamp(38px, 12.5vw, 58px);
+                line-height: 1.02;
+            }
+
+            .ornament {
+                margin: 22px 0;
+            }
+
+            .character-summary {
+                margin-top: 18px;
+                line-height: 1.72;
+            }
+
+            .section {
+                padding: 46px 0;
+            }
+
+            .subsection + .subsection {
+                margin-top: 30px;
+            }
+
+            .subsection h3,
+            .relation-group-title {
+                font-size: 22px;
+            }
+
+            .quote,
+            .history-note {
+                padding: 28px 22px;
+            }
+
+            .quote {
+                margin-top: 34px;
+            }
+
+            .interesting-fact {
+                padding: 22px 20px 22px 46px;
+            }
+
+            .interesting-fact::before {
+                left: 20px;
+            }
+
+            .relations {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 26px 14px;
+            }
+
+            .relation-photo {
+                width: clamp(88px, 25vw, 108px);
+                height: clamp(88px, 25vw, 108px);
+            }
+
+            .relation-name {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            :root {
+                --page-padding: 14px;
+            }
+
+            .hero-content h1 {
+                font-size: 38px;
+            }
+
+            .relations {
+                gap-inline: 8px;
+            }
+
+            .relation-photo {
+                width: 82px;
+                height: 82px;
+            }
+
+            .relation-label {
+                max-width: 120px;
+            }
+
+            .quote,
+            .history-note {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+
+        @media (hover: none) {
+            .menu-button:hover,
+            .relation-link:hover .relation-photo {
+                transform: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
     </style>
 </head>
 
